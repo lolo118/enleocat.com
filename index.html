@@ -58,39 +58,73 @@
 
         /* --- Estilos de la Galería --- */
         .gallery-item {
-            @apply relative overflow-hidden rounded-lg cursor-pointer shadow-lg;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
         .gallery-item img {
-            @apply w-full h-64 object-cover transition-transform duration-300 ease-in-out;
+            width: 100%;
+            height: 16rem; /* 256px */
+            object-fit: cover;
+            transition: transform 0.3s ease-in-out;
         }
         .gallery-item:hover img {
-            @apply transform scale-110;
+            transform: scale(1.10);
         }
         .gallery-item .overlay {
-            @apply absolute inset-0 bg-black bg-opacity-0 flex items-center justify-center transition-all duration-300;
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
         }
         .gallery-item:hover .overlay {
-            @apply bg-opacity-50;
+            background-color: rgba(0, 0, 0, 0.5);
         }
         .gallery-item .overlay-icon {
-            @apply text-white text-4xl opacity-0 transform scale-75 transition-all duration-300;
+            color: white;
+            font-size: 2.25rem; /* 36px */
+            opacity: 0;
+            transform: scale(0.75);
+            transition: all 0.3s;
         }
         .gallery-item:hover .overlay-icon {
-            @apply opacity-100 scale-100;
+            opacity: 1;
+            transform: scale(1);
         }
 
         /* --- Estilos del Lightbox (Modal) --- */
         #lightbox {
-            @apply fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 transition-opacity duration-300;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            transition: opacity 0.3s;
         }
         #lightbox.hidden {
-            @apply opacity-0 pointer-events-none;
+            opacity: 0;
+            pointer-events: none;
         }
         #lightbox img {
-            @apply max-w-[90vw] max-h-[85vh] rounded-lg shadow-2xl;
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: 0.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
         #lightbox-close {
-            @apply absolute top-5 right-5 text-white text-4xl cursor-pointer;
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            color: white;
+            font-size: 2.25rem; /* 36px */
+            cursor: pointer;
         }
     </style>
 </head>
@@ -281,44 +315,37 @@
             <div class="container mx-auto px-6">
                 <h2 class="text-3xl font-bold text-gray-900 mb-12 section-title">Galería de Proyectos</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <!-- Imagen 1 -->
+                    <!-- NOTE: All image sources have been changed from .jpg to .JPG -->
                     <div class="gallery-item">
-                        <img src="img/transporte_maquinaria.jpg" alt="Transporte de maquinaria pesada en carretón">
+                        <img src="img/transporte_maquinaria.JPG" alt="Transporte de maquinaria pesada en carretón">
                         <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
                     </div>
-                    <!-- Imagen 2 -->
                     <div class="gallery-item">
-                        <img src="img/flota_camiones.jpg" alt="Flota de camiones Iveco en depósito">
+                        <img src="img/flota_camiones.JPG" alt="Flota de camiones Iveco en depósito">
                         <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
                     </div>
-                    <!-- Imagen 3 -->
                     <div class="gallery-item">
-                        <img src="img/transporte_algodon.jpg" alt="Camión transportando fardos de algodón">
+                        <img src="img/transporte_algodon.JPG" alt="Camión transportando fardos de algodón">
                         <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
                     </div>
-                    <!-- Imagen 4 -->
                     <div class="gallery-item">
-                        <img src="img/pala_cargadora.jpg" alt="Pala cargadora en obra">
+                        <img src="img/pala_cargadora.JPG" alt="Pala cargadora en obra">
                         <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
                     </div>
-                    <!-- Imagen 5 -->
                     <div class="gallery-item">
-                        <img src="img/construccion_estructura.jpg" alt="Construcción de estructura metálica">
+                        <img src="img/construccion_estructura.JPG" alt="Construcción de estructura metálica">
                         <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
                     </div>
-                    <!-- Imagen 6 -->
                     <div class="gallery-item">
-                        <img src="img/camion_volcador.jpg" alt="Camión volcador descargando material">
+                        <img src="img/camion_volcador.JPG" alt="Camión volcador descargando material">
                         <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
                     </div>
-                    <!-- Imagen 7 -->
                     <div class="gallery-item">
-                        <img src="img/materiales_construccion.jpg" alt="Depósito con materiales de construcción">
+                        <img src="img/materiales_construccion.JPG" alt="Depósito con materiales de construcción">
                         <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
                     </div>
-                    <!-- Imagen 8 -->
                     <div class="gallery-item">
-                        <img src="img/servicios_construccion.jpg" alt="Servicios de construcción y alquiler de maquinaria">
+                        <img src="img/servicios_construccion.JPG" alt="Servicios de construcción y alquiler de maquinaria">
                         <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
                     </div>
                 </div>
@@ -652,5 +679,3 @@
 
 </body>
 </html>
-
-
