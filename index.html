@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enleocat - Soluciones Integrales y Empresas del Grupo</title>
+    <meta name="description" content="Grupo Enleocat: Servicios de Metalúrgica, Logística, Obra Civil y Pública. Conoce nuestras empresas La Hernestina Feedlot y Carnicería.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Three.js para la animación del banner -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Estilos personalizados -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        #hero-section {
+            background-color: #111827;
+        }
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        .hero-content h1, .hero-content p {
+            text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.7);
+        }
+        .section-title {
+            border-left: 4px solid #4f46e5;
+            padding-left: 1rem;
+        }
+        .card-hover {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .aspect-w-16 { position: relative; padding-bottom: 56.25%; }
+        .aspect-h-9 { height: 0; }
+        .aspect-w-16 > iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        /* --- Estilos de la Galería --- */
+        .gallery-item {
+            @apply relative overflow-hidden rounded-lg cursor-pointer shadow-lg;
+        }
+        .gallery-item img {
+            @apply w-full h-64 object-cover transition-transform duration-300 ease-in-out;
+        }
+        .gallery-item:hover img {
+            @apply transform scale-110;
+        }
+        .gallery-item .overlay {
+            @apply absolute inset-0 bg-black bg-opacity-0 flex items-center justify-center transition-all duration-300;
+        }
+        .gallery-item:hover .overlay {
+            @apply bg-opacity-50;
+        }
+        .gallery-item .overlay-icon {
+            @apply text-white text-4xl opacity-0 transform scale-75 transition-all duration-300;
+        }
+        .gallery-item:hover .overlay-icon {
+            @apply opacity-100 scale-100;
+        }
+
+        /* --- Estilos del Lightbox (Modal) --- */
+        #lightbox {
+            @apply fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 transition-opacity duration-300;
+        }
+        #lightbox.hidden {
+            @apply opacity-0 pointer-events-none;
+        }
+        #lightbox img {
+            @apply max-w-[90vw] max-h-[85vh] rounded-lg shadow-2xl;
+        }
+        #lightbox-close {
+            @apply absolute top-5 right-5 text-white text-4xl cursor-pointer;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#" class="flex items-center">
+                <svg width="180" height="50" viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg">
+                  <g transform="translate(5, 5)">
+                    <path d="M0 10 L15 0 L30 10 L30 15 L15 5 L0 15 Z" fill="#D1D5DB"/>
+                    <path d="M0 20 L15 10 L30 20 L30 25 L15 15 L0 25 Z" fill="#9CA3AF"/>
+                    <path d="M0 30 L15 20 L30 30 L30 35 L15 25 L0 35 Z" fill="#6B7280"/>
+                  </g>
+                  <text x="45" y="32" font-family="Inter, sans-serif" font-size="22" font-weight="bold" fill="#1F2937">EnleoCat</text>
+                  <text x="168" y="32" font-family="Inter, sans-serif" font-size="10" fill="#1F2937">®</text>
+                </svg>
+            </a>
+            <div class="hidden md:flex space-x-8">
+                <a href="#nosotros" class="text-gray-600 hover:text-indigo-600">Sobre Nosotros</a>
+                <a href="#grupo" class="text-gray-600 hover:text-indigo-600">Nuestro Grupo</a>
+                <a href="#servicios" class="text-gray-600 hover:text-indigo-600">Servicios</a>
+                <a href="#galeria" class="text-gray-600 hover:text-indigo-600">Galería</a>
+                <a href="#novedades" class="text-gray-600 hover:text-indigo-600">Novedades</a>
+                <a href="#proyecto" class="text-gray-600 hover:text-indigo-600">Inicia tu Proyecto</a>
+                <a href="#contacto" class="text-gray-600 hover:text-indigo-600">Contacto</a>
+            </div>
+            <div class="md:hidden">
+                <button id="menu-btn" class="text-gray-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="#nosotros" class="block py-2 px-4 text-sm hover:bg-gray-100">Sobre Nosotros</a>
+            <a href="#grupo" class="block py-2 px-4 text-sm hover:bg-gray-100">Nuestro Grupo</a>
+            <a href="#servicios" class="block py-2 px-4 text-sm hover:bg-gray-100">Servicios</a>
+            <a href="#galeria" class="block py-2 px-4 text-sm hover:bg-gray-100">Galería</a>
+            <a href="#novedades" class="block py-2 px-4 text-sm hover:bg-gray-100">Novedades</a>
+             <a href="#proyecto" class="block py-2 px-4 text-sm hover:bg-gray-100">Inicia tu Proyecto</a>
+            <a href="#contacto" class="block py-2 px-4 text-sm hover:bg-gray-100">Contacto</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero-section" class="relative text-white py-20 md:py-32 overflow-hidden">
+            <canvas id="hero-canvas"></canvas>
+            <div class="hero-content container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-4">Construyendo el Futuro de su Negocio</h1>
+                <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-3xl mx-auto">En Enleocat, transformamos ideas en realidades. Ofrecemos soluciones innovadoras y estratégicas para garantizar su crecimiento y éxito en el mercado.</p>
+                <a href="#proyecto" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full transition duration-300">Inicia tu Proyecto Ahora</a>
+            </div>
+        </section>
+
+        <!-- Sobre Nosotros -->
+        <section id="nosotros" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4 section-title">Sobre Nosotros</h2>
+                <p class="text-gray-600 mb-8 max-w-4xl">
+                    Somos una empresa dedicada a ofrecer servicios integrales que impulsan la eficiencia y la innovación. Nuestra misión es ser el socio estratégico de confianza para nuestros clientes, acompañándolos en cada paso de su desarrollo. Creemos en la calidad, el compromiso y la creación de valor a largo plazo.
+                </p>
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-indigo-600 mb-2">Misión</h3>
+                        <p class="text-gray-600">Potenciar a nuestros clientes con herramientas y estrategias que les permitan alcanzar su máximo potencial.</p>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-indigo-600 mb-2">Visión</h3>
+                        <p class="text-gray-600">Ser líderes y referentes en el sector por nuestra innovación, calidad de servicio y la confianza de nuestros clientes.</p>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-indigo-600 mb-2">Valores</h3>
+                        <p class="text-gray-600">Integridad, Excelencia, Colaboración y Pasión por lo que hacemos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Nuestro Grupo Section -->
+        <section id="grupo" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-gray-900 mb-12 section-title">Nuestro Grupo de Empresas</h2>
+                <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-12">
+                    <!-- Empresa 1 -->
+                    <div class="bg-white rounded-lg shadow-lg p-8 card-hover flex items-center">
+                        <div class="flex-shrink-0 mr-6">
+                            <svg class="h-16 w-16 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c1.356 0 2.673-.11 3.955-.322M12 21c-1.356 0-2.673-.11-3.955-.322m0 0A9.007 9.007 0 0112 3c4.97 0 9 4.03 9 9s-4.03 9-9 9m-8.716-6.747A9.007 9.007 0 0112 3c-4.97 0-9 4.03-9 9s4.03 9 9 9m0-9.055a1.5 1.5 0 100-2.999 1.5 1.5 0 000 2.999z" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-2">La Hernestina Feedlot</h3>
+                            <p class="text-gray-600">Nuestra unidad de negocio dedicada a la cría y engorde intensivo de ganado, garantizando los más altos estándares de calidad y bienestar animal para la producción de carne premium.</p>
+                        </div>
+                    </div>
+                    <!-- Empresa 2 -->
+                    <div class="bg-white rounded-lg shadow-lg p-8 card-hover flex items-center">
+                        <div class="flex-shrink-0 mr-6">
+                            <svg class="h-16 w-16 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.092 1.21-.138 2.43-.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" /></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-2">La Hernestina Carnicería</h3>
+                            <p class="text-gray-600">Ofrecemos cortes de carne de la más alta calidad, directamente desde nuestro feedlot al consumidor. Un compromiso con el sabor, la frescura y la trazabilidad del producto.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Servicios -->
+        <section id="servicios" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-gray-900 mb-12 section-title">Nuestros Servicios</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <div class="bg-gray-50 rounded-lg shadow-lg p-8 card-hover flex flex-col">
+                        <div class="flex-shrink-0 mb-4"><svg class="h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.472-2.472a3.75 3.75 0 00-5.304-5.304L4.788 11.42m5.877 5.877l-2.472-2.472a3.75 3.75 0 015.304-5.304L17.25 4.788" /></svg></div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Metalúrgica</h3>
+                        <p class="text-gray-600 flex-grow">Diseñamos y fabricamos estructuras metálicas, piezas a medida y soluciones industriales, combinando ingeniería de precisión con materiales de alta resistencia para todo tipo de proyectos.</p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg shadow-lg p-8 card-hover flex flex-col">
+                        <div class="flex-shrink-0 mb-4"><svg class="h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.658-.463 1.243-1.117 1.243H4.498c-.654 0-1.187-.585-1.117-1.243l1.263-12A3.75 3.75 0 017.5 4.5h9a3.75 3.75 0 013.256 3.993z" /></svg></div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Transporte y Logística</h3>
+                        <p class="text-gray-600 flex-grow">Gestionamos la cadena de suministro de punta a punta. Ofrecemos planificación, almacenamiento y distribución para optimizar sus operaciones y asegurar la entrega eficiente de sus productos.</p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg shadow-lg p-8 card-hover flex flex-col">
+                        <div class="flex-shrink-0 mb-4"><svg class="h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg></div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Obra Civil</h3>
+                        <p class="text-gray-600 flex-grow">Ejecutamos proyectos de construcción civil, desde edificaciones residenciales y comerciales hasta movimientos de suelo y urbanizaciones, cumpliendo con los más altos estándares de calidad y seguridad.</p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg shadow-lg p-8 card-hover flex flex-col">
+                        <div class="flex-shrink-0 mb-4"><svg class="h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h6M9 11.25h6M9 15.75h6" /></svg></div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Obra Pública</h3>
+                        <p class="text-gray-600 flex-grow">Contribuimos al desarrollo de la comunidad participando en licitaciones y ejecutando obras públicas como carreteras, puentes, redes de servicios y edificios gubernamentales.</p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-lg p-8 card-hover flex flex-col">
+                        <div class="flex-shrink-0 mb-4"><svg class="h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.125-.504 1.125-1.125V14.25m-17.25 4.5v-9m17.25 9v-9m-17.25-9L5.625 6H18V4.5a2.25 2.25 0 00-2.25-2.25H5.625a2.25 2.25 0 00-2.25 2.25v2.25z" /></svg></div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Transporte de Carga</h3>
+                        <p class="text-gray-600 flex-grow">Ofrecemos soluciones logísticas para el transporte de su carga a nivel local y nacional, garantizando entregas seguras, puntuales y eficientes con nuestra flota moderna.</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-lg p-8 card-hover flex flex-col">
+                        <div class="flex-shrink-0 mb-4"><svg class="h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0l.879-.659M7.5 14.25l-2.489-1.867a.75.75 0 01.02-1.246l2.489-1.867M16.5 14.25l2.489-1.867a.75.75 0 00-.02-1.246l-2.489-1.867" /></svg></div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Alquiler de Maquinaria y Carretón</h3>
+                        <p class="text-gray-600 flex-grow">Disponemos de maquinaria pesada y vial, y servicio de carretón para equipos especiales. Flexibilidad y equipamiento de primer nivel para sus proyectos.</p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-lg p-8 card-hover flex flex-col">
+                        <div class="flex-shrink-0 mb-4"><svg class="h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-6 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.125-.504 1.125-1.125V14.25m-17.25 4.5v-9m17.25 9v-9m-17.25-9L5.625 6H18V4.5a2.25 2.25 0 00-2.25-2.25H5.625a2.25 2.25 0 00-2.25 2.25v2.25z" /></svg></div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Venta de Vehículos</h3>
+                        <p class="text-gray-600 flex-grow">Catálogo de vehículos nuevos y usados (autos, utilitarios, camiones) con asesoramiento y financiación para que encuentre la movilidad que su negocio necesita.</p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-lg p-8 card-hover flex flex-col">
+                        <div class="flex-shrink-0 mb-4"><svg class="h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" /></svg></div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Servicios Inmobiliarios</h3>
+                        <p class="text-gray-600 flex-grow">Le guiamos en la compra, venta o alquiler de propiedades residenciales, comerciales y terrenos, ofreciendo una visión clara del mercado para su mejor inversión.</p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-lg p-8 card-hover flex flex-col">
+                        <div class="flex-shrink-0 mb-4"><svg class="h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" /></svg></div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Venta de Materiales de Construcción</h3>
+                        <p class="text-gray-600 flex-grow">Proveemos materiales de la más alta calidad para obras de cualquier envergadura. Encuentre todo lo que necesita, con precios competitivos y asesoramiento técnico.</p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-lg p-8 card-hover flex flex-col">
+                        <div class="flex-shrink-0 mb-4"><svg class="h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Soluciones Financieras</h3>
+                        <p class="text-gray-600 flex-grow">Impulsamos sus proyectos con créditos, préstamos e inversiones. Ofrecemos planes flexibles y accesibles para brindarle el respaldo económico que necesita para crecer.</p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-lg p-8 card-hover flex flex-col">
+                        <div class="flex-shrink-0 mb-4"><svg class="h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 15s.5-1.25-.25-3L18.5 8.5l.25-2.5-.5-3.5-2.5.5-2.5-.25-3.5-.5-2.5 2.5-.25 2.5 1.5 3.5-2 2.5-3 .25s-1.25.5-2.5-.25L2.5 15.5" /></svg></div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Agricultura</h3>
+                        <p class="text-gray-600 flex-grow">Apoyamos al sector agrícola con una oferta integral que abarca desde la provisión de insumos y maquinaria hasta el asesoramiento para maximizar el rendimiento.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Galería de Proyectos Section -->
+        <section id="galeria" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-gray-900 mb-12 section-title">Galería de Proyectos</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Imagen 1 -->
+                    <div class="gallery-item">
+                        <img src="img/transporte_maquinaria.jpg" alt="Transporte de maquinaria pesada en carretón">
+                        <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
+                    </div>
+                    <!-- Imagen 2 -->
+                    <div class="gallery-item">
+                        <img src="img/flota_camiones.jpg" alt="Flota de camiones Iveco en depósito">
+                        <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
+                    </div>
+                    <!-- Imagen 3 -->
+                    <div class="gallery-item">
+                        <img src="img/transporte_algodon.jpg" alt="Camión transportando fardos de algodón">
+                        <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
+                    </div>
+                    <!-- Imagen 4 -->
+                    <div class="gallery-item">
+                        <img src="img/pala_cargadora.jpg" alt="Pala cargadora en obra">
+                        <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
+                    </div>
+                    <!-- Imagen 5 -->
+                    <div class="gallery-item">
+                        <img src="img/construccion_estructura.jpg" alt="Construcción de estructura metálica">
+                        <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
+                    </div>
+                    <!-- Imagen 6 -->
+                    <div class="gallery-item">
+                        <img src="img/camion_volcador.jpg" alt="Camión volcador descargando material">
+                        <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
+                    </div>
+                    <!-- Imagen 7 -->
+                    <div class="gallery-item">
+                        <img src="img/materiales_construccion.jpg" alt="Depósito con materiales de construcción">
+                        <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
+                    </div>
+                    <!-- Imagen 8 -->
+                    <div class="gallery-item">
+                        <img src="img/servicios_construccion.jpg" alt="Servicios de construcción y alquiler de maquinaria">
+                        <div class="overlay"><div class="overlay-icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Novedades Section -->
+        <section id="novedades" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-gray-900 mb-12 section-title">Últimas Novedades</h2>
+                <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div class="bg-gray-50 rounded-lg shadow-lg overflow-hidden flex flex-col">
+                        <div class="aspect-w-16 aspect-h-9">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <p class="text-sm text-gray-500 mb-2">15 de Julio, 2025</p>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3">Nuevo Proyecto de Maquinaria Vial en Marcha</h3>
+                            <p class="text-gray-600 flex-grow">Estamos orgullosos de anunciar el inicio de un nuevo proyecto de infraestructura vial. Nuestro equipo y maquinaria ya se encuentran trabajando para mejorar las conexiones en la región.</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg shadow-lg overflow-hidden flex flex-col">
+                        <img src="https://placehold.co/600x400/334155/ffffff?text=Nuestra+Flota" alt="Camiones de la flota de Enleocat" class="w-full h-64 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <p class="text-sm text-gray-500 mb-2">10 de Julio, 2025</p>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3">Ampliamos nuestra Flota de Transporte</h3>
+                            <p class="text-gray-600 flex-grow">Incorporamos 5 nuevas unidades a nuestra flota de camiones para fortalecer el servicio de transporte de carga y responder a la creciente demanda de nuestros clientes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Inicia tu Proyecto Section -->
+        <section id="proyecto" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4 section-title">Inicia tu Proyecto con Nosotros</h2>
+                <p class="text-gray-600 mb-8 max-w-3xl">Completa estos simples pasos para que podamos entender tus necesidades y ponernos en contacto contigo con una propuesta inicial.</p>
+                
+                <form name="project" method="POST" data-netlify="true" class="bg-white p-8 rounded-lg shadow-xl max-w-4xl mx-auto">
+                    <input type="hidden" name="form-name" value="project" />
+                    <div id="project-form-container">
+                        <div id="step1" class="form-step">
+                            <h3 class="text-xl font-semibold mb-4">Paso 1: ¿Qué servicio te interesa?</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                <label class="border p-4 rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="service" value="Metalurgica" class="mr-2">Metalúrgica</label>
+                                <label class="border p-4 rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="service" value="Transporte y Logistica" class="mr-2">Transporte y Logística</label>
+                                <label class="border p-4 rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="service" value="Obra Civil" class="mr-2">Obra Civil</label>
+                                <label class="border p-4 rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="service" value="Obra Publica" class="mr-2">Obra Pública</label>
+                                <label class="border p-4 rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="service" value="Transporte de Carga" class="mr-2">Transporte de Carga</label>
+                                <label class="border p-4 rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="service" value="Alquiler de Maquinaria" class="mr-2">Alquiler de Maquinaria</label>
+                                <label class="border p-4 rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="service" value="Venta de Vehiculos" class="mr-2">Venta de Vehículos</label>
+                                <label class="border p-4 rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="service" value="Inmobiliaria" class="mr-2">Inmobiliaria</label>
+                                <label class="border p-4 rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="service" value="Materiales Construccion" class="mr-2">Materiales Construcción</label>
+                                <label class="border p-4 rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="service" value="Financiera" class="mr-2">Financiera</label>
+                                <label class="border p-4 rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="service" value="Agricultura" class="mr-2">Agricultura</label>
+                                <label class="border p-4 rounded-lg cursor-pointer hover:bg-indigo-50 transition"><input type="radio" name="service" value="Otro" class="mr-2">Otro</label>
+                            </div>
+                            <button type="button" onclick="nextStep(2)" class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg">Siguiente</button>
+                        </div>
+                        <div id="step2" class="form-step hidden">
+                            <h3 class="text-xl font-semibold mb-4">Paso 2: Cuéntanos más sobre tu proyecto</h3>
+                            <textarea name="details" id="project-details" placeholder="Describe lo que necesitas, fechas estimadas, ubicación, etc." rows="6" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            <div class="mt-6 flex justify-between">
+                                <button type="button" onclick="prevStep(1)" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg">Anterior</button>
+                                <button type="button" onclick="nextStep(3)" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg">Siguiente</button>
+                            </div>
+                        </div>
+                        <div id="step3" class="form-step hidden">
+                            <h3 class="text-xl font-semibold mb-4">Paso 3: Tus datos de contacto</h3>
+                            <div class="space-y-4">
+                                <input name="name" id="contact-name" type="text" placeholder="Tu Nombre Completo" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                                <input name="email" id="contact-email" type="email" placeholder="Tu Correo Electrónico" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                                <input name="phone" id="contact-phone" type="tel" placeholder="Tu Teléfono (Opcional)" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                             <div class="mt-6 flex justify-between">
+                                <button type="button" onclick="prevStep(2)" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg">Anterior</button>
+                                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg">Enviar Solicitud</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+        
+        <!-- Contacto -->
+        <section id="contacto" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4 section-title">Hablemos</h2>
+                <p class="text-gray-600 mb-8 max-w-2xl">¿Prefieres un contacto más directo? Envíanos un mensaje o contáctanos por WhatsApp.</p>
+                <div class="bg-gray-100 p-8 rounded-lg shadow-inner max-w-4xl mx-auto">
+                    <form name="contact" method="POST" data-netlify="true">
+                        <input type="hidden" name="form-name" value="contact" />
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <input name="name" type="text" placeholder="Tu Nombre" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                            <input name="email" type="email" placeholder="Tu Correo Electrónico" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                        </div>
+                        <textarea name="message" placeholder="Tu Mensaje" rows="5" class="w-full p-3 mt-6 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" required></textarea>
+                        <div class="text-center mt-6">
+                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full transition duration-300 w-full md:w-auto">Enviar Mensaje</button>
+                        </div>
+                    </form>
+                    <div class="text-center my-4 text-gray-500">O</div>
+                    <a href="https://wa.me/5493850000000" target="_blank" class="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition duration-300 w-full md:w-3/4 mx-auto">
+                        <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.36 21.82 12.04 21.82C17.5 21.82 21.95 17.37 21.95 11.91C21.95 6.45 17.5 2 12.04 2ZM16.56 15.82C16.36 16.22 15.29 16.74 14.99 16.79C14.69 16.84 14.24 16.86 13.9 16.79C13.56 16.71 12.76 16.46 11.81 15.58C10.66 14.53 10.03 13.25 9.88 12.95C9.73 12.65 9.61 12.45 9.76 12.25C9.91 12.05 10.11 11.85 10.31 11.65C10.46 11.5 10.56 11.33 10.66 11.13C10.76 10.93 10.71 10.76 10.61 10.56C10.51 10.36 10.01 9.13 9.81 8.63C9.61 8.13 9.41 8.21 9.26 8.21C9.11 8.21 8.86 8.21 8.66 8.21C8.46 8.21 8.13 8.26 7.88 8.51C7.63 8.76 6.91 9.43 6.91 10.58C6.91 11.73 7.91 12.83 8.06 13.03C8.21 13.23 10.01 15.93 12.68 17.11C13.31 17.39 13.76 17.56 14.11 17.69C14.71 17.89 15.24 17.84 15.64 17.76C16.09 17.66 17.01 17.11 17.21 16.51C17.41 15.91 17.41 15.41 17.31 15.21C17.21 15.01 17.01 14.91 16.81 14.81C16.61 14.71 16.76 15.42 16.56 15.82Z"></path></svg>
+                        Contactar por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Chatbot -->
+    <div id="chatbot-container" class="fixed bottom-5 right-5 z-50">
+        <div id="chat-window" class="hidden absolute bottom-20 right-0 w-80 bg-white rounded-lg shadow-2xl transition-all duration-300">
+            <div class="bg-indigo-600 text-white p-4 rounded-t-lg flex justify-between items-center">
+                <h3 class="font-bold">Asistente Virtual</h3>
+                <button id="close-chat" class="text-white">&times;</button>
+            </div>
+            <div class="p-4 h-64 overflow-y-auto">
+                <div class="mb-3 text-sm">
+                    <p class="bg-gray-200 text-gray-800 rounded-lg py-2 px-3 inline-block">¡Hola! Soy el asistente de Enleocat. ¿En qué puedo ayudarte hoy?</p>
+                </div>
+            </div>
+            <div class="p-4 border-t">
+                <input type="text" placeholder="Escribe tu mensaje..." class="w-full p-2 border rounded-lg">
+            </div>
+        </div>
+        <button id="chatbot-button" class="bg-indigo-600 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg hover:bg-indigo-700 transition">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+        </button>
+    </div>
+
+    <!-- Lightbox (Modal) para la Galería -->
+    <div id="lightbox" class="hidden">
+        <span id="lightbox-close">&times;</span>
+        <img id="lightbox-image" src="" alt="Vista ampliada de proyecto">
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2024 Enleocat. Todos los derechos reservados.</p>
+            <div class="flex justify-center space-x-4 mt-4">
+                <a href="#" class="text-gray-400 hover:text-white">Facebook</a>
+                <a href="#" class="text-gray-400 hover:text-white">LinkedIn</a>
+                <a href="#" class="text-gray-400 hover:text-white">Twitter</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Script para el menú móvil
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Script para el Chatbot
+        const chatbotButton = document.getElementById('chatbot-button');
+        const chatWindow = document.getElementById('chat-window');
+        const closeChat = document.getElementById('close-chat');
+        chatbotButton.addEventListener('click', () => {
+            chatWindow.classList.toggle('hidden');
+        });
+        closeChat.addEventListener('click', () => {
+            chatWindow.classList.add('hidden');
+        });
+
+        // Script para el formulario de proyecto
+        let currentStep = 1;
+        const steps = document.querySelectorAll('.form-step');
+        function showStep(stepNumber) {
+            steps.forEach(step => step.classList.add('hidden'));
+            document.getElementById(`step${stepNumber}`).classList.remove('hidden');
+            currentStep = stepNumber;
+        }
+        function nextStep(stepNumber) {
+            if (stepNumber === 2) {
+                const serviceRadio = document.querySelector('input[name="service"]:checked');
+                if (!serviceRadio) {
+                    alert('Por favor, selecciona un servicio para continuar.');
+                    return;
+                }
+            }
+            showStep(stepNumber);
+        }
+        function prevStep(stepNumber) {
+            showStep(stepNumber);
+        }
+
+        // --- Script para la Galería y Lightbox ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImage = document.getElementById('lightbox-image');
+            const lightboxClose = document.getElementById('lightbox-close');
+
+            galleryItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const imgSrc = item.querySelector('img').src;
+                    lightboxImage.setAttribute('src', imgSrc);
+                    lightbox.classList.remove('hidden');
+                });
+            });
+
+            const closeLightbox = () => {
+                lightbox.classList.add('hidden');
+            }
+
+            lightboxClose.addEventListener('click', closeLightbox);
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) {
+                    closeLightbox();
+                }
+            });
+        });
+
+
+        // Script para la animación del banner con Three.js
+        document.addEventListener('DOMContentLoaded', () => {
+            const heroSection = document.getElementById('hero-section');
+            if (!heroSection) return;
+
+            let scene, camera, renderer, points;
+            const particles = [];
+            const particleCount = 5000; 
+            const clock = new THREE.Clock();
+
+            function createCircleTexture() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 64;
+                canvas.height = 64;
+                const context = canvas.getContext('2d');
+                context.beginPath();
+                context.arc(32, 32, 30, 0, 2 * Math.PI);
+                context.fillStyle = 'white';
+                context.fill();
+                return new THREE.CanvasTexture(canvas);
+            }
+
+            function init() {
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(75, heroSection.offsetWidth / heroSection.offsetHeight, 0.1, 1000);
+                camera.position.z = 5;
+                renderer = new THREE.WebGLRenderer({
+                    canvas: document.getElementById('hero-canvas'),
+                    alpha: true
+                });
+                renderer.setSize(heroSection.offsetWidth, heroSection.offsetHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+                const pointGeometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(particleCount * 3);
+                const colors = new Float32Array(particleCount * 3);
+                const neonColors = [
+                    new THREE.Color(0x00ffff),
+                    new THREE.Color(0xff00ff),
+                    new THREE.Color(0x00ff7f)
+                ];
+
+                for (let i = 0; i < particleCount; i++) {
+                    const x = (Math.random() - 0.5) * 20;
+                    const y = (Math.random() - 0.5) * 20;
+                    const z = (Math.random() - 0.5) * 20;
+                    positions[i * 3] = x;
+                    positions[i * 3 + 1] = y;
+                    positions[i * 3 + 2] = z;
+
+                    const baseColor = neonColors[i % neonColors.length];
+                    colors[i * 3] = baseColor.r;
+                    colors[i * 3 + 1] = baseColor.g;
+                    colors[i * 3 + 2] = baseColor.b;
+
+                    particles.push({
+                        flickerSpeed: Math.random() * 2 + 0.5,
+                        flickerOffset: Math.random() * 10,
+                        baseColor: baseColor
+                    });
+                }
+                pointGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                pointGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+                const pointsMaterial = new THREE.PointsMaterial({
+                    map: createCircleTexture(),
+                    size: 0.05,
+                    transparent: true,
+                    blending: THREE.AdditiveBlending,
+                    sizeAttenuation: true,
+                    vertexColors: true,
+                    opacity: 0.8
+                });
+                points = new THREE.Points(pointGeometry, pointsMaterial);
+                scene.add(points);
+
+                window.addEventListener('resize', onWindowResize, false);
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                const elapsedTime = clock.getElapsedTime();
+                const pointColors = points.geometry.attributes.color.array;
+
+                for (let i = 0; i < particleCount; i++) {
+                    const p = particles[i];
+                    const intensity = (Math.sin(elapsedTime * p.flickerSpeed + p.flickerOffset) + 1) / 2;
+                    const finalIntensity = Math.pow(intensity, 3) * 0.7 + 0.3;
+                    const finalColor = p.baseColor.clone().multiplyScalar(finalIntensity);
+                    pointColors[i * 3] = finalColor.r;
+                    pointColors[i * 3 + 1] = finalColor.g;
+                    pointColors[i * 3 + 2] = finalColor.b;
+                }
+
+                points.geometry.attributes.color.needsUpdate = true;
+                points.rotation.y = elapsedTime * 0.02;
+                renderer.render(scene, camera);
+            }
+
+            function onWindowResize() {
+                camera.aspect = heroSection.offsetWidth / heroSection.offsetHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(heroSection.offsetWidth, heroSection.offsetHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            }
+
+            init();
+            animate();
+        });
+    </script>
+
+</body>
+</html>
+
+
